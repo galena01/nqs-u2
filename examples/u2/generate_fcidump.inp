@@ -1,0 +1,22 @@
+&GATEWAY
+Title = U2 FCIDUMP at bond length 2.48
+Coord
+2
+
+U  0.0  0.0  -1.2400
+U  0.0  0.0  1.2400
+Basis = STUTTGART
+Group = X Y Z
+
+&SEWARD 
+
+&RASSCF
+LUMORB
+Linear
+Symmetry = 4
+Spin = 7
+CHARge = 0
+nActEl = 24 0 0  
+ORBLISTING = ALL
+DMPO
+

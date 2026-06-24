@@ -1,0 +1,21 @@
+&GATEWAY
+Title = H2O dump test
+Coord
+3
+
+H 0 0.789 -0.614 
+H 0 -0.789 -0.614 
+O 0 0 0
+Basis = 6-31G
+Group = XY Y
+
+&SEWARD 
+
+&SCF
+
+&RASSCF
+ras2 = 7 2 0 4
+ORBLISTING = ALL
+DMPO
+
+

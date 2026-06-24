@@ -1,0 +1,22 @@
+&GATEWAY
+Title = U2 RASSCF at bond length 2.48
+Coord
+2
+
+U  0.0  0.0  -1.2400
+U  0.0  0.0  1.2400
+Basis = STUTTGART
+Group = X Y Z
+
+&SEWARD 
+
+&RASSCF
+LUMORB
+Linear
+Symmetry = 4
+Spin = 7
+CHARge = 0
+nActEl = 12 2 2  
+ORBLISTING = ALL
+PRWF = 1e-3
+THRS=1.0E-06,1.0E-01,1.0E-03
