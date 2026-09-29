@@ -13,9 +13,11 @@
 #include "utils/utils.h"
 #include "MolLoader.h"
 
+
 using namespace std;
 
 Molecule Molecule::instance;
+
 
 inline uint64_t pack_key(int i, int j, int k, int l) {
     return (uint64_t(i) << 48)
@@ -23,6 +25,7 @@ inline uint64_t pack_key(int i, int j, int k, int l) {
          | (uint64_t(k) << 16)
          |  uint64_t(l);
 }
+
 
 int Molecule::load_fcidump_molcas(std::string filename, string args_groupname) {
     groupname = args_groupname;
@@ -62,16 +65,16 @@ int Molecule::load_fcidump_molcas(std::string filename, string args_groupname) {
 
         if (std::regex_search(line, match, norb_regex)) {
             norb = std::stoi(match[1]);
-        }
+        } 
         if (std::regex_search(line, match, nelec_regex)) {
             nelec = std::stoi(match[1]);
-        }
+        } 
         if (std::regex_search(line, match, ms2_regex)) {
             ms2 = std::stoi(match[1]);
-        }
+        } 
         if (std::regex_search(line, match, isym_regex)) {
             isym = std::stoi(match[1]);
-        }
+        } 
         if (std::regex_search(line, match, orbsym_regex)) {
             std::string sym_str = match[1].str();
             sym_str.erase(std::remove_if(sym_str.begin(), sym_str.end(), ::isspace), sym_str.end());
@@ -168,7 +171,7 @@ std::ostream& operator<<(std::ostream& os, const Molecule& mol) {
         os << id << " ";
     }
     os << "\n";
-
+    
     os << "  MO Energies: ";
     for (auto energy : mol.mo_energy) {
         os << energy << " ";
@@ -203,3 +206,5 @@ double Molecule::get_g2e(int i, int j, int k, int l) {
     auto it = g2e.find(idx);
     return (it != g2e.end()) ? it->second : 0.0;
 }
+
+

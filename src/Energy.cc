@@ -15,14 +15,6 @@
 #include "Hamiltonian.h"
 
 
-struct KVpod {
-    uint8_t alpha[MAX_SLATER_SIZE];
-    uint8_t beta [MAX_SLATER_SIZE];
-    double  re;
-    double  im;
-};
-
-
 
 #define HAM_THRESH              1e-10
 
@@ -88,7 +80,7 @@ pair<Eigen::VectorXcd, WfnMap_t> omp_eloc(const vector<SlaterInt_t> &states, NN_
     vector<WfnMap_t> sc_selector_parallel;
     WfnMap_t sc_selector_full;
 
-    sc_selector_parallel.resize(N_THREAD);
+    sc_selector_parallel.resize(N_THREAD);   
 
     int NUM_PER_LOOP = 2048;
     int n_loop = (n_state-1)/NUM_PER_LOOP + 1;
@@ -101,7 +93,7 @@ pair<Eigen::VectorXcd, WfnMap_t> omp_eloc(const vector<SlaterInt_t> &states, NN_
 
         #pragma omp parallel for
         for(int i=start;i<end;i++){
-            assert(N_THREAD==omp_get_num_threads());
+            assert(N_THREAD==omp_get_num_threads());   
             int tid = omp_get_thread_num();
             elocs[i] = eloc(states[i], pnet, sc_selector_parallel[tid], sc_flag, sc_thresh);
         }
@@ -116,14 +108,11 @@ pair<Eigen::VectorXcd, WfnMap_t> omp_eloc(const vector<SlaterInt_t> &states, NN_
     }
 
 
-
     if(!sc_flag){
         return make_pair(elocs, WfnMap_t());
     }
 
     cout << "    " << strtime() << "Selecting subspacce ..." << endl;
-
-
 
     vector<pair<SlaterInt_t, Eigen::dcomplex>> sc_vec;
     for (const auto& kv : sc_selector_full) {
@@ -137,9 +126,9 @@ pair<Eigen::VectorXcd, WfnMap_t> omp_eloc(const vector<SlaterInt_t> &states, NN_
         }
     }else{
         target_n_state = min(target_n_state, (int)sc_vec.size());
-
+        
         std::nth_element(
-            sc_vec.begin(), sc_vec.begin() + target_n_state - 1, sc_vec.end(),
+            sc_vec.begin(), sc_vec.begin() + target_n_state - 1, sc_vec.end(), 
             [](const auto& a, const auto& b) { return a.second.real() > b.second.real(); }
         );
 
@@ -152,16 +141,36 @@ pair<Eigen::VectorXcd, WfnMap_t> omp_eloc(const vector<SlaterInt_t> &states, NN_
 }
 
 
+tuple<Eigen::dcomplex, Eigen::VectorXcd, Eigen::VectorXd> get_energy_subspace(const vector<SlaterInt_t> &subspace, NN_Params &pnet, int nCasOrb)
+{
+    Eigen::VectorXd rho;
+    Eigen::VectorXcd logwfn = NN_forward_loop(pnet, subspace, nCasOrb);
+    logwfn = logwfn.array() - logwfn.real().maxCoeff();
+
+    Eigen::VectorXcd elocs = Eigen::VectorXcd::Zero(subspace.size());
+    WfnMap_t logwfn_hash;
+    for(int i=0;i<subspace.size();i++){
+        logwfn_hash.insert(make_pair(subspace[i], logwfn[i]));
+    }
+    Eigen::VectorXcd wfn = logwfn.array().exp();
+    rho = wfn.cwiseAbs2();
+    rho.array() /= rho.sum();
+
+    elocs = omp_eloc_subspace(subspace, pnet, logwfn_hash);
+    Eigen::dcomplex eng = (elocs.transpose()*rho).sum();
+    return make_tuple(eng, elocs, rho);
+}
+
 pair<Eigen::dcomplex, Eigen::VectorXcd> get_energy_subspace_new(const Eigen::SparseMatrix<double> &H_subspace, const Eigen::VectorXcd &psi, const Eigen::VectorXd &rho)
 {
     Eigen::VectorXcd H_psi = H_subspace * psi;
-
+    
     Eigen::VectorXcd elocs = Eigen::VectorXcd::Zero(psi.size());
-
+    
     elocs = H_psi.cwiseQuotient(psi);
-
+    
     Eigen::dcomplex energy = rho.dot(elocs);
-
+    
     return make_pair(energy, elocs);
 }
 
@@ -169,11 +178,11 @@ Eigen::SparseMatrix<double> get_H_subspace(const vector<SlaterInt_t> &subspace)
 {
     Eigen::SparseMatrix<double> subspace_H;
     std::vector<Eigen::Triplet<double>> tripletList;
-
+    
     #pragma omp parallel
     {
         std::vector<Eigen::Triplet<double>> local_triplets;
-
+        
         #pragma omp for nowait
         for(size_t i=0; i<subspace.size(); i++){
             for(size_t j=0; j<subspace.size(); j++){
@@ -183,7 +192,7 @@ Eigen::SparseMatrix<double> get_H_subspace(const vector<SlaterInt_t> &subspace)
                 }
             }
         }
-
+        
         #pragma omp critical
         tripletList.insert(tripletList.end(), local_triplets.begin(), local_triplets.end());
     }
@@ -193,3 +202,4 @@ Eigen::SparseMatrix<double> get_H_subspace(const vector<SlaterInt_t> &subspace)
     subspace_H.makeCompressed();
     return subspace_H;
 }
+

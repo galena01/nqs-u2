@@ -7,7 +7,7 @@
     --max_iter 1000 \
     --alpha 6.0 \
     --n_block 2 \
-    --max_lr 0.2 --min_lr 1e-5 --eps 1e-4\
-    --line_search 5 \
+    --max_lr 0.2 --min_lr 1e-5 --diag_eps 1e-4\
+    --n_search 5 \
     --subspace_iter 4 \
     --inv_temp 2.0 

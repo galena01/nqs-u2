@@ -1,5 +1,3 @@
-InitCurves.csv: NQS variational energy optimization trajectories.
+InitCurves.csv: Individual NQS optimization trajectories for Figure 2.
 
-PEC.csv: Calculated potential energy curves.
-
-NOON.csv: Natural orbital occupation numbers.
+Potential-energy-curve energies and natural-orbital occupation numbers are provided in the Supporting Information.

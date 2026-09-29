@@ -31,7 +31,7 @@ class MultiThreadRNG
         ~MultiThreadRNG() = default;
 
     private:
-        vector<mt19937_64> engines;
+        vector<mt19937_64> engines;    
 };
 
 extern MultiThreadRNG oRNG;
@@ -42,6 +42,7 @@ static const std::map<std::string, std::vector<std::string>> pyscf_irrep_map = {
     {"base", {"0"}},
     {"c1", {"a"}},
     {"c2v", {"a1", "a2", "b1", "b2"}},
+    {"d2", {"a", "b1", "b2", "b3"}},
     {"d2h", {"ag", "b1g", "b2g", "b3g", "au", "b1u", "b2u", "b3u"}}
 };
 
@@ -49,6 +50,7 @@ static const std::map<std::string, std::vector<std::string>> molcas_irrep_map = 
     {"base", {"1"}},
     {"c1", {"a"}},
     {"c2v", {"a1", "b1", "a2", "b2"}},
+    {"d2", {"a", "b2", "b1", "b3"}},
     {"d2h", {"ag", "b3u", "b2u", "b1g", "b1u", "b2g", "b3g", "au"}}
 };
 

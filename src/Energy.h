@@ -4,6 +4,7 @@
 #include "RBM.h"
 #include "Eigen/Sparse"
 
+
 using WfnMap_t = unordered_map<SlaterInt_t, Eigen::dcomplex, SlaterIntHash>;
 
 Eigen::dcomplex eloc_subspace(SlaterInt_t state, NN_Params &pnet, const WfnMap_t &logwfn_hash);
@@ -11,6 +12,8 @@ Eigen::dcomplex eloc_subspace(SlaterInt_t state, NN_Params &pnet, const WfnMap_t
 Eigen::VectorXcd omp_eloc_subspace(const vector<SlaterInt_t> &states, NN_Params &pnet, const WfnMap_t &logwfn_hash);
 
 pair<Eigen::VectorXcd, WfnMap_t> omp_eloc(const vector<SlaterInt_t> &states, NN_Params &pnet, int target_n_state, double sc_thresh, bool sc_flag);
+
+tuple<Eigen::dcomplex, Eigen::VectorXcd, Eigen::VectorXd> get_energy_subspace(const vector<SlaterInt_t> &subspace, NN_Params &pnet, int nCasOrb);
 
 Eigen::dcomplex eloc(SlaterInt_t state, NN_Params &pnet, WfnMap_t &sc_selector);
 

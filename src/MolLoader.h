@@ -12,7 +12,7 @@ class Molecule
 {
     private:
         Molecule() = default;
-
+        
         Molecule(const Molecule&) = delete;
         Molecule& operator=(const Molecule&) = delete;
 
@@ -42,7 +42,7 @@ class Molecule
         double get_g2e(int i, int j, int k, int l);
 
         int load_fcidump_molcas(string filename, string args_groupname);
-
+        
         static Molecule& get_instance() {
             return instance;
         }
